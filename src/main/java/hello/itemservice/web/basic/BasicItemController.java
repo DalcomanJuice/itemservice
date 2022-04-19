@@ -4,6 +4,7 @@ import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -102,4 +103,26 @@ public class BasicItemController {
         //Model 에 들어가는 네이밍이 되기 떄문에 이름에 주의하자.
         return "basic/item";
     }
+
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable Long itemId, Model model){
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item", item);
+        return "basic/editForm";
+    }
+
+    @PostMapping("/{itemId}/edit")
+    public String edit(@PathVariable Long itemId, @ModelAttribute Item item){
+        itemRepository.update(itemId, item);
+
+        //rediect 설정.
+        return "redirect:/basic/items/{itemId}";
+    }
 }
+
+    /**
+     * 중요한 점
+     * HTML Form 전송은 PUT, PATCH를 지원하지 않는다. Get, Post 만 사용할 수 있다
+     * PUT, POST 는 HTTP API 전송시에 사용한다
+     * 스프링에서 HTTP POST Form 요청할 때 히든 필드를 통해서 PUT, PATCH 매핑을 사용하는 방법이 있지만.. HTTP 요청상 POST 요청이다.
+     */
