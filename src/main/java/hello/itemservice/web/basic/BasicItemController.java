@@ -95,7 +95,7 @@ public class BasicItemController {
 
     //ModelAttribute 생략할 경우
     //Item -> item 으로 바뀌어서 모델에 담긴다
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV4(Item item){
         itemRepository.save(item);
         //model 에 넣었다.
@@ -103,6 +103,19 @@ public class BasicItemController {
         //Model 에 들어가는 네이밍이 되기 떄문에 이름에 주의하자.
         return "basic/item";
     }
+
+    /**
+     * 마지막으로 한 행위가 .. 계쏙 된다.
+     * post 만을 계속 호출 할 경우.
+     * 새로 고침을 해도 .. 마지막으로 한 요청을 서버에 다시 요청하는것.
+     * post/Redirect/Get -> PRG...
+     */
+    @PostMapping("/add")
+    public String addItemV5(Item item){
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId();
+    }
+
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model){
@@ -126,3 +139,5 @@ public class BasicItemController {
      * PUT, POST 는 HTTP API 전송시에 사용한다
      * 스프링에서 HTTP POST Form 요청할 때 히든 필드를 통해서 PUT, PATCH 매핑을 사용하는 방법이 있지만.. HTTP 요청상 POST 요청이다.
      */
+
+
