@@ -8,6 +8,7 @@ import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -109,13 +110,22 @@ public class BasicItemController {
      * post 만을 계속 호출 할 경우.
      * 새로 고침을 해도 .. 마지막으로 한 요청을 서버에 다시 요청하는것.
      * post/Redirect/Get -> PRG...
+     * 문제점 : 아래와 같은 코드로 할경우 URL 인코딩이 되어있지 않기 때문에 해당 방법은 위험.
      */
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV5(Item item){
         itemRepository.save(item);
         return "redirect:/basic/items/" + item.getId();
     }
 
+    //rediectAttribute에 세팅되면 아래와 같이 넣어줄 수 있따. / 나머지 애들은 쿼리 파라메터로 들어간다.
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId",savedItem.getId());
+        redirectAttributes.addAttribute("status",true);
+        return "redirect:/basic/items/{itemId}";
+    }
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model){
